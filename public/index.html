@@ -2,20 +2,578 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Early — Sleep Accountability</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--p:#534AB7;--pl:#EEEDFE;--pm:#AFA9EC;--p8:#3C3489;--tl:#1D9E75;--tlp:#E1F5EE;--tl8:#085041;--bg:#ffffff;--bg2:#f5f5f5;--t1:#1a1a1a;--t2:#666666;--bd:#e5e5e5;--rlg:12px;--rmd:8px}
-@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--bg2:#2a2a2a;--t1:#f0f0f0;--t2:#999999;--bd:#3a3a3a;--pl:#2a2660;--p8:#AFA9EC}}
-html,body{height:100%;background:#f0eff8}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:16px 0 32px;min-height:100vh}
-.phone{width:100%;max-width:390px;background:var(--bg);border-radius:40px;overflow:hidden;display:flex;flex-direction:column;min-height:750px;box-shadow:0 8px 40px rgba(83,74,183,0.15)}
-.screen{display:none;flex-direction:column;min-height:750px}
+:root{--p:#534AB7;--pl:#EEEDFE;--pm:#AFA9EC;--p8:#3C3489;--tl:#1D9E75;--tlp:#E1F5EE;--tl8:#085041;--am:#BA7517;--aml:#FAEEDA;--am8:#633806;--re:#A32D2D;--rel:#FCEBEB;--bg:#fff;--bg2:#f7f6fb;--bg3:#f0eff8;--t1:#1a1a1a;--t2:#666;--bd:#e8e7f0;--rlg:14px;--rmd:9px}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3)}
+body{display:flex;justify-content:center;padding:12px 0 40px}
+.phone{width:min(390px,100%);background:var(--bg);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;min-height:800px;box-shadow:0 12px 48px rgba(83,74,183,.18)}
+.screen{display:none;flex-direction:column;min-height:800px}
 .screen.on{display:flex}
-.sbar{padding:16px 22px 6px;display:flex;justify-content:space-between;align-items:center;background:var(--bg)}
-.sbar-time{font-weight:600;font-size:15px;color:var(--t1)}
-.content{flex:1;padding:22px 20px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.nav{display:flex;border-top:1px solid var(--bd);padding:10px 0 20px;background:var(--bg)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--t2);cursor:pointer;padding:4px 0;transition:color .15s}
+.sbar{padding:16px 22px 4px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.content{flex:1;padding:18px 18px 12px;overflow-y:auto}
+.nav{display:flex;border-top:1px solid var(--bd);padding:8px 0 18px;background:var(--bg);flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;color:var(--t2);cursor:pointer;padding:4px 0;transition:color .15s}
 .ni.on{color:var(--p)}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn{background:var(--p);color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:600;width:100%;cursor:pointer;font-family:inherit;margin-top:10px;transition:opacity .15s}
+.btn:active{opacity:.8}
+.btn:disabled{opacity:.45;cursor:default}
+.btn-o{background:transparent;color:var(--p);border:1.5px solid var(--p);border-radius:14px;padding:12px;font-size:14px;font-weight:500;width:100%;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn-sm{background:var(--pl);color:var(--p8);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.card{background:var(--bg2);border-radius:var(--rlg);padding:14px;margin-bottom:10px}
+.card.w{background:var(--bg);border:1px solid var(--bd)}
+.pill{display:inline-flex;align-items:center;background:var(--pl);color:var(--p8);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;gap:3px}
+.pill.g{background:var(--tlp);color:var(--tl8)}
+.back{font-size:13px;color:var(--p);cursor:pointer;margin-bottom:14px;display:inline-flex;align-items:center;gap:3px;font-weight:500}
+.ai-bub{background:var(--pl);border-radius:0 var(--rlg) var(--rlg) var(--rlg);padding:13px 15px;margin-bottom:10px}
+.ai-bub p{font-size:13px;color:var(--p8);line-height:1.65}
+.ai-badge{display:inline-flex;align-items:center;gap:3px;background:var(--p);color:#fff;font-size:9px;font-weight:600;padding:2px 7px;border-radius:8px;margin-bottom:6px}
+.typing{display:inline-flex;gap:4px;align-items:center;padding:10px 14px;background:var(--pl);border-radius:0 var(--rlg) var(--rlg) var(--rlg);margin-bottom:10px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--pm);animation:bop 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.tog{display:flex;background:var(--bg2);border-radius:var(--rmd);padding:3px;margin-bottom:14px}
+.tog-b{flex:1;padding:7px 0;text-align:center;font-size:12px;border-radius:6px;cursor:pointer;color:var(--t2);transition:.15s}
+.tog-b.on{background:var(--bg);color:var(--t1);font-weight:600}
+textarea{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rmd);padding:11px;font-size:13px;color:var(--t1);font-family:inherit;resize:none;line-height:1.6;margin-top:6px}
+textarea:focus{outline:none;border-color:var(--p)}
+input[type=text],input[type=time]{width:100%;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rmd);padding:10px 13px;font-size:14px;color:var(--t1);font-family:inherit}
+input:focus{outline:none;border-color:var(--p)}
+.chip{background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--t1);cursor:pointer;font-family:inherit;display:block;width:100%;text-align:left;margin-bottom:8px}
+.chip.on{background:var(--pl);border-color:var(--pm);color:var(--p8)}
+.mood-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--bd);background:var(--bg2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mood-btn.on{border-color:var(--p);background:var(--pl)}
+.ob-step{display:none}
+.ob-step.on{display:block}
+.ob-progress{height:4px;background:var(--bg2);border-radius:2px;margin-bottom:24px;overflow:hidden}
+.ob-fill{height:100%;background:var(--p);border-radius:2px;transition:width .3s}
+.recovery-step{background:var(--bg2);border-radius:var(--rmd);padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.recovery-step.done{background:var(--tlp)}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+<div class="sbar">
+  <span style="font-weight:700;font-size:15px;color:var(--t1)" id="clock">--:--</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <span class="pill" id="streak-pill">🔥 12</span>
+    <span style="background:#FFF8E1;color:#795500;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;cursor:pointer" onclick="go('s-premium')">✦ Free</span>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="screen on" id="s-onboard">
+<div class="content" style="display:flex;flex-direction:column;justify-content:space-between;min-height:760px">
+  <div>
+    <div class="ob-progress"><div class="ob-fill" id="ob-fill" style="width:20%"></div></div>
+    <div class="ob-step on" id="ob-0">
+      <div style="text-align:center;padding:20px 0 24px">
+        <div style="font-size:56px;margin-bottom:12px">🌙</div>
+        <h1 style="font-size:28px;font-weight:700;color:var(--t1);margin-bottom:8px">Welcome to Early</h1>
+        <p style="font-size:14px;color:var(--t2);line-height:1.6">The sleep app that actually gets you to bed. Built on accountability, not just tracking.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="card" style="margin-bottom:0;display:flex;align-items:center;gap:12px"><div style="font-size:22px">🔥</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Streak accountability</p><p style="font-size:11px;color:var(--t2)">Build consecutive on-time nights</p></div></div>
+        <div class="card" style="margin-bottom:0;display:flex;align-items:center;gap:12px"><div style="font-size:22px">👥</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Social pressure (the good kind)</p><p style="font-size:11px;color:var(--t2)">See when your friends actually sleep</p></div></div>
+        <div class="card" style="margin-bottom:0;display:flex;align-items:center;gap:12px"><div style="font-size:22px">✦</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">AI-powered wind-down</p><p style="font-size:11px;color:var(--t2)">Personalised to how your day went</p></div></div>
+      </div>
+    </div>
+    <div class="ob-step" id="ob-1">
+      <h2 style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:4px">What's your name?</h2>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:18px">We'll personalise your experience</p>
+      <input type="text" id="ob-name" placeholder="Your first name" style="font-size:18px;text-align:center;padding:14px">
+    </div>
+    <div class="ob-step" id="ob-2">
+      <h2 style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:4px">What time do you usually sleep?</h2>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:18px">Be honest — we'll suggest a realistic target</p>
+      <button class="chip on" id="oct-1" onclick="selectCurrentTime(this,'Before midnight')">Before midnight</button>
+      <button class="chip" id="oct-2" onclick="selectCurrentTime(this,'12–1 AM')">12–1 AM</button>
+      <button class="chip" id="oct-3" onclick="selectCurrentTime(this,'1–2 AM')">1–2 AM</button>
+      <button class="chip" id="oct-4" onclick="selectCurrentTime(this,'2–3 AM')">2–3 AM</button>
+      <button class="chip" id="oct-5" onclick="selectCurrentTime(this,'After 3 AM')">After 3 AM</button>
+    </div>
+    <div class="ob-step" id="ob-3">
+      <h2 style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:4px">Your suggested target</h2>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:18px">Based on your current habits</p>
+      <div class="card w" style="text-align:center;padding:20px;margin-bottom:14px">
+        <div class="ai-badge" style="margin-bottom:10px;display:inline-flex">✦ AI suggestion</div>
+        <p style="font-size:48px;font-weight:700;color:var(--p);letter-spacing:-2px" id="ob-suggested-time">12:30</p>
+        <p style="font-size:12px;color:var(--t2);margin-top:4px">AM · start here, we'll go earlier gradually</p>
+      </div>
+      <p id="ob-suggestion-reason" style="font-size:13px;color:var(--t2);line-height:1.6;text-align:center;margin-bottom:12px">We'll move your target 15 minutes earlier each week as your streak builds.</p>
+    </div>
+    <div class="ob-step" id="ob-4">
+      <h2 style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:4px">Why do you stay up late?</h2>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Pick all that apply</p>
+      <button class="chip" onclick="this.classList.toggle('on')">Scrolling social media</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Watching YouTube / Netflix</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Work or studying</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Mind racing, can't relax</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Gaming</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Just not feeling tired</button>
+    </div>
+  </div>
+  <div>
+    <button class="btn" id="ob-next" onclick="obNext()">Get started</button>
+    <p style="text-align:center;font-size:12px;color:var(--t2);margin-top:10px;cursor:pointer" onclick="finishOnboard()">Skip for now</p>
+  </div>
+</div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="s-home">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+    <div><p style="font-size:12px;color:var(--t2);margin-bottom:2px">Good evening, <span id="home-name">there</span></p><h2 style="font-size:22px;font-weight:700;color:var(--t1)">Tonight</h2></div>
+    <div style="text-align:center;background:var(--pl);border-radius:12px;padding:8px 12px;cursor:pointer" onclick="go('s-stats')">
+      <p style="font-size:9px;color:var(--p8);font-weight:700">SLEEP SCORE</p>
+      <p style="font-size:26px;font-weight:700;color:var(--p);line-height:1">74</p>
+    </div>
+  </div>
+  <div class="card w" style="text-align:center;padding:16px;margin-bottom:10px">
+    <p style="font-size:11px;color:var(--t2);margin-bottom:4px">target bedtime</p>
+    <div style="font-size:50px;font-weight:700;color:var(--t1);letter-spacing:-3px;line-height:1">12:00</div>
+    <p style="font-size:11px;color:var(--t2);margin-top:4px">AM · wind-down at 11:30 PM</p>
+    <div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t2);margin-bottom:4px"><span>Sleep debt</span><span style="color:var(--re);font-weight:600">-14h this month</span></div><div style="height:5px;background:var(--bg2);border-radius:3px;overflow:hidden"><div style="width:62%;height:100%;background:var(--re);border-radius:3px"></div></div></div>
+  </div>
+  <div class="card w" style="margin-bottom:10px">
+    <p style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:8px">HOW DO YOU FEEL THIS MORNING?</p>
+    <div style="display:flex;justify-content:space-between">
+      <button class="mood-btn" onclick="logMood(this)">😫</button>
+      <button class="mood-btn" onclick="logMood(this)">😕</button>
+      <button class="mood-btn" onclick="logMood(this)">😐</button>
+      <button class="mood-btn" onclick="logMood(this)">🙂</button>
+      <button class="mood-btn" onclick="logMood(this)">😊</button>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ai-badge">✦ Coach</div>
+    <p style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:8px">Tell me about your day and I'll personalise tonight's wind-down.</p>
+    <button class="btn-sm" onclick="go('s-coach')">Chat with coach →</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+    <div class="card" style="margin-bottom:0;cursor:pointer;text-align:center" onclick="go('s-journal')"><div style="font-size:18px">📓</div><p style="font-size:11px;font-weight:600;color:var(--t1);margin-top:3px">Journal</p></div>
+    <div class="card" style="margin-bottom:0;cursor:pointer;text-align:center" onclick="go('s-patterns')"><div style="font-size:18px">🔍</div><p style="font-size:11px;font-weight:600;color:var(--t1);margin-top:3px">Patterns</p></div>
+    <div class="card" style="margin-bottom:0;cursor:pointer;text-align:center" onclick="go('s-recovery')"><div style="font-size:18px">🛡️</div><p style="font-size:11px;font-weight:600;color:var(--t1);margin-top:3px">Recovery</p></div>
+  </div>
+  <button class="btn" onclick="go('s-windown')">Start wind-down</button>
+</div>
+<div class="nav">
+  <div class="ni on" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="ni" onclick="go('s-social')"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.87"/></svg><span>Social</span></div>
+  <div class="ni" onclick="go('s-stats')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Stats</span></div>
+  <div class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>AI</span></div>
+  <div class="ni" onclick="go('s-settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+</div>
+</div>
+
+<!-- WIND-DOWN -->
+<div class="screen" id="s-windown">
+<div class="content">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:2px">Wind-down</h2>
+  <p style="font-size:12px;color:var(--t2);margin-bottom:14px">3 steps · guided tonight</p>
+  <div style="display:flex;gap:5px;margin-bottom:16px" id="wd-dots">
+    <div style="flex:1;height:4px;border-radius:2px;background:var(--p)"></div>
+    <div style="flex:1;height:4px;border-radius:2px;background:var(--bg2)"></div>
+    <div style="flex:1;height:4px;border-radius:2px;background:var(--bg2)"></div>
+  </div>
+  <div id="wd-0">
+    <div class="card w" style="border-left:3px solid var(--p);border-radius:0 var(--rlg) var(--rlg) 0;padding:16px;margin-bottom:10px">
+      <span class="pill" style="font-size:10px;margin-bottom:8px;display:inline-flex">Step 1 — Breathing</span>
+      <p style="font-size:15px;font-weight:600;color:var(--t1);margin:6px 0 4px">Box breathing</p>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:14px">Inhale 4s · hold 4s · exhale 4s · hold 4s</p>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div id="bc" style="width:68px;height:68px;border-radius:50%;background:var(--p);transition:transform 4s ease-in-out"></div>
+        <p id="bl" style="font-size:13px;color:var(--p);font-weight:600">Inhale...</p>
+      </div>
+    </div>
+    <button class="btn" onclick="wdNext(1)">Done — next step</button>
+  </div>
+  <div id="wd-1" style="display:none">
+    <div class="card w" style="border-left:3px solid #EF9F27;border-radius:0 var(--rlg) var(--rlg) 0;padding:16px;margin-bottom:10px">
+      <span style="background:#FAEEDA;color:#633806;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:8px;display:inline-block">Step 2 — Screen</span>
+      <p style="font-size:15px;font-weight:600;color:var(--t1);margin:6px 0 12px">Screen dimming</p>
+      <input type="range" min="5" max="100" value="20" style="width:100%" oninput="document.getElementById('bv').textContent=Math.round(this.value)+'%'">
+      <p id="bv" style="font-size:13px;font-weight:600;color:var(--t1);margin-top:6px;text-align:center">20%</p>
+    </div>
+    <button class="btn" onclick="wdNext(2)">Done — next step</button>
+  </div>
+  <div id="wd-2" style="display:none">
+    <div class="card w" style="border-left:3px solid var(--tl);border-radius:0 var(--rlg) var(--rlg) 0;padding:16px;margin-bottom:10px">
+      <span class="pill g" style="font-size:10px;margin-bottom:8px;display:inline-flex">Step 3 — Blocker</span>
+      <p style="font-size:15px;font-weight:600;color:var(--t1);margin:6px 0 4px">App blocker on</p>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:12px">Locked until 7:00 AM</p>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;justify-content:space-between;background:var(--bg2);border-radius:var(--rmd);padding:9px 12px"><span style="font-size:13px;color:var(--t1)">Instagram</span><span style="font-size:10px;font-weight:600;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:8px">Blocked</span></div>
+        <div style="display:flex;justify-content:space-between;background:var(--bg2);border-radius:var(--rmd);padding:9px 12px"><span style="font-size:13px;color:var(--t1)">YouTube</span><span style="font-size:10px;font-weight:600;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:8px">Blocked</span></div>
+        <div style="display:flex;justify-content:space-between;background:var(--bg2);border-radius:var(--rmd);padding:9px 12px"><span style="font-size:13px;color:var(--t1)">TikTok</span><span style="font-size:10px;font-weight:600;color:#27500A;background:#EAF3DE;padding:2px 8px;border-radius:8px">Blocked</span></div>
+      </div>
+    </div>
+    <button class="btn" onclick="go('s-journal')">Done — write journal</button>
+  </div>
+</div>
+</div>
+
+<!-- COACH -->
+<div class="screen" id="s-coach">
+<div class="content" style="display:flex;flex-direction:column">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;color:white;font-size:18px">✦</div>
+    <div><p style="font-size:14px;font-weight:600;color:var(--t1)">Early Coach</p><p style="font-size:11px;color:var(--t2)">Personalised tonight</p></div>
+  </div>
+  <div id="coach-msgs" style="flex:1;display:flex;flex-direction:column;margin-bottom:10px">
+    <div class="ai-bub"><div class="ai-badge">✦ AI</div><p>Hey! How was your day? Tell me and I'll personalise tonight's wind-down for you.</p></div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="coach-chips">
+    <button style="background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--t1);cursor:pointer;font-family:inherit" onclick="sendCoach('Stressful day, a lot on my mind')">Stressful</button>
+    <button style="background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--t1);cursor:pointer;font-family:inherit" onclick="sendCoach('Calm and relaxed')">Calm</button>
+    <button style="background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--t1);cursor:pointer;font-family:inherit" onclick="sendCoach('Exhausted, really long day')">Exhausted</button>
+    <button style="background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:12px;color:var(--t1);cursor:pointer;font-family:inherit" onclick="sendCoach('Wired, can\'t slow down')">Wired</button>
+  </div>
+  <div style="display:flex;gap:8px">
+    <input type="text" id="coach-inp" placeholder="Tell the coach..." onkeydown="if(event.key==='Enter')sendCoach()">
+    <button onclick="sendCoach()" style="background:var(--p);border:none;border-radius:var(--rmd);padding:10px 14px;cursor:pointer;flex-shrink:0;color:white;font-size:16px">→</button>
+  </div>
+</div>
+</div>
+
+<!-- JOURNAL -->
+<div class="screen" id="s-journal">
+<div class="content">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:2px">Journal</h2>
+  <p style="font-size:12px;color:var(--t2);margin-bottom:14px">A question before you sleep</p>
+  <div class="card w" style="margin-bottom:10px">
+    <div class="ai-badge" style="margin-bottom:8px">✦ Tonight's prompt</div>
+    <p id="journal-q" style="font-size:15px;font-weight:600;color:var(--t1);line-height:1.5">Loading your prompt...</p>
+  </div>
+  <textarea id="journal-ans" rows="5" placeholder="Write your thoughts..."></textarea>
+  <button class="btn" onclick="submitJournal()">Save and sleep</button>
+  <button class="btn-o" onclick="loadJournal(true)">Different question</button>
+</div>
+</div>
+
+<!-- SOCIAL -->
+<div class="screen" id="s-social">
+<div class="content">
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:12px">Social</h2>
+  <div class="tog">
+    <div class="tog-b on" id="st-f" onclick="setSocTab('f')">Friends</div>
+    <div class="tog-b" id="st-c" onclick="setSocTab('c')">Challenges</div>
+    <div class="tog-b" id="st-b" onclick="setSocTab('b')">Bets</div>
+  </div>
+  <div id="soc-f"></div>
+  <div id="soc-c" style="display:none">
+    <div class="card w" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><p style="font-size:14px;font-weight:600;color:var(--t1)">7-day midnight pact</p><p style="font-size:11px;color:var(--t2)">4 friends · 5 days left</p></div><span class="pill g" style="font-size:10px">Active</span></div>
+      <div style="height:5px;background:var(--bg2);border-radius:3px;overflow:hidden"><div style="width:71%;height:100%;background:var(--p);border-radius:3px"></div></div>
+      <p style="font-size:10px;color:var(--t2);margin-top:4px">Group 71% on track</p>
+    </div>
+    <button class="btn">New challenge</button>
+  </div>
+  <div id="soc-b" style="display:none">
+    <div class="card w">
+      <p style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px">Bet vs Marc — $5</p>
+      <p style="font-size:11px;color:var(--t2);margin-bottom:12px">Sleep before midnight · 5 days</p>
+      <div style="display:flex;justify-content:space-around;align-items:center">
+        <div style="text-align:center"><div style="width:38px;height:38px;border-radius:50%;background:#EEEDFE;color:#3C3489;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;margin:0 auto 4px">EL</div><p style="font-size:14px;font-weight:700;color:var(--tl)">4/5 ✓</p></div>
+        <p style="font-size:18px;color:var(--t2)">vs</p>
+        <div style="text-align:center"><div style="width:38px;height:38px;border-radius:50%;background:#E1F5EE;color:#085041;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;margin:0 auto 4px">MC</div><p style="font-size:14px;font-weight:700;color:var(--tl)">5/5 ✓</p></div>
+      </div>
+    </div>
+    <button class="btn-o" style="margin-top:10px">New sleep bet</button>
+  </div>
+</div>
+<div class="nav">
+  <div class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="ni on" onclick="go('s-social')"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.87"/></svg><span>Social</span></div>
+  <div class="ni" onclick="go('s-stats')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Stats</span></div>
+  <div class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>AI</span></div>
+  <div class="ni" onclick="go('s-settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+</div>
+</div>
+
+<!-- STATS -->
+<div class="screen" id="s-stats">
+<div class="content">
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:12px">Your sleep</h2>
+  <div style="display:flex;justify-content:center;margin-bottom:12px">
+    <svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r="54" fill="none" stroke="#EEEDFE" stroke-width="10"/><circle cx="65" cy="65" r="54" fill="none" stroke="var(--p)" stroke-width="10" stroke-dasharray="339" stroke-dashoffset="88" stroke-linecap="round" transform="rotate(-90 65 65)"/><text x="65" y="60" text-anchor="middle" font-size="10" fill="#666" font-family="inherit">Sleep score</text><text x="65" y="78" text-anchor="middle" font-size="26" font-weight="700" fill="var(--p)" font-family="inherit">74</text></svg>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+    <div style="background:var(--bg2);border-radius:var(--rmd);padding:10px;text-align:center"><p style="font-size:9px;color:var(--t2);margin-bottom:2px">AVG BEDTIME</p><p style="font-size:19px;font-weight:700;color:var(--t1)">12:18</p><p style="font-size:10px;color:var(--tl)">↓ 47m vs last wk</p></div>
+    <div style="background:var(--bg2);border-radius:var(--rmd);padding:10px;text-align:center"><p style="font-size:9px;color:var(--t2);margin-bottom:2px">SLEEP DEBT</p><p style="font-size:19px;font-weight:700;color:var(--re)">-14h</p><p style="font-size:10px;color:var(--t2)">this month</p></div>
+  </div>
+  <div class="card w" style="margin-bottom:10px">
+    <p style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:10px">BEDTIME CHART</p>
+    <div style="display:flex;align-items:flex-end;gap:5px;height:70px" id="chart-bars"></div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--t2)"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+  </div>
+  <div class="card w">
+    <p style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:8px">28-DAY CALENDAR</p>
+    <div id="streak-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div>
+  </div>
+</div>
+<div class="nav">
+  <div class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="ni" onclick="go('s-social')"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.87"/></svg><span>Social</span></div>
+  <div class="ni on" onclick="go('s-stats')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Stats</span></div>
+  <div class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>AI</span></div>
+  <div class="ni" onclick="go('s-settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+</div>
+</div>
+
+<!-- AI INSIGHTS -->
+<div class="screen" id="s-insights">
+<div class="content">
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:2px">AI Insights</h2>
+  <p style="font-size:12px;color:var(--t2);margin-bottom:12px">Patterns and recommendations</p>
+  <div id="insights-list"></div>
+  <button class="btn-o" onclick="loadInsights(true)"><span id="ins-rt">Load insights</span></button>
+</div>
+<div class="nav">
+  <div class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="ni" onclick="go('s-social')"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.87"/></svg><span>Social</span></div>
+  <div class="ni" onclick="go('s-stats')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Stats</span></div>
+  <div class="ni on" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>AI</span></div>
+  <div class="ni" onclick="go('s-settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+</div>
+</div>
+
+<!-- PATTERNS -->
+<div class="screen" id="s-patterns">
+<div class="content">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:2px">Your patterns</h2>
+  <p style="font-size:12px;color:var(--t2);margin-bottom:14px">AI-detected habits in your sleep data</p>
+  <div id="patterns-list">
+    <div class="card w" style="border-left:3px solid #EF9F27;border-radius:0 var(--rlg) var(--rlg) 0;margin-bottom:10px">
+      <span style="background:#FAEEDA;color:#633806;font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:6px">WARNING</span>
+      <p style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px">Friday is your weak spot</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">You sleep at 3:00 AM on Fridays — 2 hours later than any other night.</p>
+      <div style="background:#FAEEDA;border-radius:var(--rmd);padding:8px 10px"><p style="font-size:11px;color:#633806;font-weight:500">Fix: Set a Friday reminder at 11 PM.</p></div>
+    </div>
+    <div class="card w" style="border-left:3px solid #534AB7;border-radius:0 var(--rlg) var(--rlg) 0;margin-bottom:10px">
+      <span style="background:#EEEDFE;color:#3C3489;font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:6px">TIP</span>
+      <p style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px">Instagram is your last habit</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">Opening Instagram after 11 PM adds an average of 47 minutes to your bedtime.</p>
+      <div style="background:#EEEDFE;border-radius:var(--rmd);padding:8px 10px"><p style="font-size:11px;color:#3C3489;font-weight:500">Fix: Move Instagram off your home screen.</p></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- RECOVERY -->
+<div class="screen" id="s-recovery">
+<div class="content">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:40px;margin-bottom:8px">🛡️</div>
+    <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:4px">Streak recovery</h2>
+    <p style="font-size:13px;color:var(--t2)">Complete all 3 before midnight to save your streak</p>
+  </div>
+  <div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:16px"><div id="rec-prog" style="width:33%;height:100%;background:var(--p);border-radius:3px;transition:width .4s"></div></div>
+  <div class="recovery-step done">
+    <div style="width:28px;height:28px;border-radius:50%;background:var(--tl);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;font-weight:700">✓</div>
+    <div><p style="font-size:13px;font-weight:600;color:var(--tl8)">Box breathing — 5 minutes</p><p style="font-size:11px;color:var(--tl8)">Completed ✓</p></div>
+  </div>
+  <div class="recovery-step" id="rec-2" onclick="completeRec(2)">
+    <div style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:var(--t2)">2</div>
+    <div><p style="font-size:13px;font-weight:600;color:var(--t1)">Write 3 lines in journal</p><p style="font-size:11px;color:var(--t2)">Tap to complete</p></div>
+  </div>
+  <div class="recovery-step" id="rec-3" onclick="completeRec(3)">
+    <div style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:var(--t2)">3</div>
+    <div><p style="font-size:13px;font-weight:600;color:var(--t1)">Phone face-down for 10 min</p><p style="font-size:11px;color:var(--t2)">Tap to complete</p></div>
+  </div>
+  <div id="rec-success" style="display:none;text-align:center;margin-top:20px">
+    <div style="font-size:40px;margin-bottom:8px">🔥</div>
+    <p style="font-size:18px;font-weight:700;color:var(--tl);margin-bottom:4px">Streak saved!</p>
+    <button class="btn" onclick="go('s-home')">Back to home</button>
+  </div>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="s-settings">
+<div class="content">
+  <h2 style="font-size:20px;font-weight:700;color:var(--t1);margin-bottom:14px">Settings</h2>
+  <div class="card w" style="margin-bottom:10px">
+    <p style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:8px">TARGET BEDTIME</p>
+    <input type="time" id="bedtime-inp" value="00:00" style="text-align:center;font-size:20px;font-weight:700">
+    <p style="font-size:11px;color:var(--t2);margin-top:6px">Wind-down starts 30 min before this</p>
+  </div>
+  <div class="card w" style="margin-bottom:10px">
+    <div class="ai-badge" style="margin-bottom:8px">✦ Smart suggestion</div>
+    <p style="font-size:13px;color:var(--p8);line-height:1.6">You've hit midnight 5 out of 7 nights — try moving to 11:45 PM next week.</p>
+    <button class="btn-sm" style="margin-top:8px" onclick="this.textContent='Applied ✓';this.disabled=true">Apply suggestion</button>
+  </div>
+  <button class="btn" onclick="this.textContent='Saved ✓';setTimeout(()=>this.textContent='Save changes',1500)">Save changes</button>
+  <button class="btn-o" onclick="go('s-premium')">Upgrade to Premium ✦</button>
+</div>
+<div class="nav">
+  <div class="ni" onclick="go('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></div>
+  <div class="ni" onclick="go('s-social')"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.87"/></svg><span>Social</span></div>
+  <div class="ni" onclick="go('s-stats')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Stats</span></div>
+  <div class="ni" onclick="go('s-insights')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span>AI</span></div>
+  <div class="ni on" onclick="go('s-settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Settings</span></div>
+</div>
+</div>
+
+<!-- PREMIUM -->
+<div class="screen" id="s-premium">
+<div class="content">
+  <div class="back" onclick="go('s-home')">← Back</div>
+  <div style="text-align:center;margin-bottom:18px"><div style="font-size:40px;margin-bottom:8px">✦</div><h2 style="font-size:22px;font-weight:700;color:var(--t1);margin-bottom:4px">Early Premium</h2><p style="font-size:13px;color:var(--t2)">Fix your sleep for good</p></div>
+  <div class="card w" style="margin-bottom:10px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:50%;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--p);font-weight:700">✓</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">AI insights and pattern detection</p><p style="font-size:11px;color:var(--t2)">Deep weekly analysis</p></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:50%;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--p);font-weight:700">✓</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Streak recovery</p><p style="font-size:11px;color:var(--t2)">Save your streak when life happens</p></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:50%;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--p);font-weight:700">✓</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Unlimited challenges and bets</p><p style="font-size:11px;color:var(--t2)">No cap on friends or groups</p></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><div style="width:26px;height:26px;border-radius:50%;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--p);font-weight:700">✓</div><div><p style="font-size:13px;font-weight:600;color:var(--t1)">Smart bedtime progression</p><p style="font-size:11px;color:var(--t2)">AI moves your target gradually</p></div></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+    <div class="card w" style="text-align:center;padding:14px"><p style="font-size:11px;color:var(--t2);margin-bottom:4px">Monthly</p><p style="font-size:22px;font-weight:700;color:var(--t1)">$4.99</p><p style="font-size:10px;color:var(--t2)">/month</p></div>
+    <div style="text-align:center;padding:14px;border:2px solid var(--p);border-radius:var(--rlg);background:var(--bg)"><p style="font-size:9px;font-weight:700;color:var(--p);margin-bottom:2px">BEST VALUE</p><p style="font-size:22px;font-weight:700;color:var(--t1)">$34.99</p><p style="font-size:10px;color:var(--t2)">/year</p></div>
+  </div>
+  <button class="btn" onclick="this.textContent='Premium activated ✓';this.disabled=true">Start 7-day free trial</button>
+  <p style="font-size:11px;color:var(--t2);text-align:center;margin-top:8px">Cancel anytime · No charge until trial ends</p>
+</div>
+</div>
+
+</div>
+
+<script>
+const FRIENDS=[
+  {init:'MC',name:'Marc',time:'11:48 PM',streak:31,bg:'#E1F5EE',tc:'#085041'},
+  {init:'KA',name:'Karim',time:'Still awake...',streak:3,bg:'#FAEEDA',tc:'#633806'},
+  {init:'NJ',name:'Nour',time:'1:22 AM',streak:0,bg:'#FAECE7',tc:'#712B13'},
+  {init:'LS',name:'Lara',time:'11:55 PM',streak:8,bg:'#FBEAF0',tc:'#72243E'},
+];
+const WEEK=[55,70,38,60,82,65,42];
+let coachHist=[];let insLoaded=false;let userName='there';let obCurrentTime='1–2 AM';let recDone={2:false,3:false};
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id)?.classList.add('on');if(id==='s-journal')loadJournal(false);if(id==='s-insights')loadInsights(false);}
+
+function updateClock(){const n=new Date();const el=document.getElementById('clock');if(el)el.textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');}
+
+async function callAI(system,messages){
+  try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages})});const d=await r.json();return d.text||'';}catch(e){return '';}
+}
+
+let obStep=0;
+function obNext(){
+  if(obStep===0){obStep=1;showOb();}
+  else if(obStep===1){const n=document.getElementById('ob-name');if(n&&n.value.trim()){userName=n.value.trim();const hn=document.getElementById('home-name');if(hn)hn.textContent=userName;}obStep=2;showOb();}
+  else if(obStep===2){obStep=3;setSuggestedTime();showOb();}
+  else if(obStep===3){obStep=4;showOb();}
+  else{finishOnboard();}
+}
+function showOb(){
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('on'));
+  document.getElementById('ob-'+obStep)?.classList.add('on');
+  document.getElementById('ob-fill').style.width=((obStep+1)/5*100)+'%';
+  const btn=document.getElementById('ob-next');
+  if(btn)btn.textContent=obStep===4?'Start Early →':'Continue';
+}
+function selectCurrentTime(el,t){obCurrentTime=t;document.querySelectorAll('#ob-2 .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function setSuggestedTime(){
+  const map={'Before midnight':'11:45','12–1 AM':'12:30','1–2 AM':'1:00','2–3 AM':'1:30','After 3 AM':'2:00'};
+  const reasons={'Before midnight':'You\'re close! Let\'s aim for 11:45 PM.','12–1 AM':'12:30 AM is a solid first target.','1–2 AM':'1:00 AM — 30 minutes earlier is achievable.','2–3 AM':'Start at 1:30 AM and work down.','After 3 AM':'Let\'s start with 2:00 AM gradually.'};
+  const el=document.getElementById('ob-suggested-time');const re=document.getElementById('ob-suggestion-reason');
+  if(el)el.textContent=map[obCurrentTime]||'12:30';if(re)re.textContent=reasons[obCurrentTime]||'We\'ll move 15 minutes earlier each week.';
+}
+function finishOnboard(){go('s-home');renderFriends();renderChart();renderStreakGrid();}
+
+function logMood(el){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+
+function wdNext(n){document.getElementById('wd-'+(n-1)).style.display='none';const s=document.getElementById('wd-'+n);if(s)s.style.display='block';document.querySelectorAll('#wd-dots div').forEach((d,i)=>{d.style.background=i<n?'var(--p)':'var(--bg2)';});}
+
+function completeRec(n){
+  recDone[n]=true;
+  const el=document.getElementById('rec-'+n);
+  if(el){el.className='recovery-step done';el.querySelector('div').textContent='✓';el.querySelector('div').style.background='var(--tl)';el.querySelector('div').style.color='white';}
+  const count=Object.values(recDone).filter(Boolean).length;
+  const prog=document.getElementById('rec-prog');if(prog)prog.style.width=(33+count*33)+'%';
+  if(Object.values(recDone).every(Boolean)){const s=document.getElementById('rec-success');if(s)s.style.display='block';}
+}
+
+async function sendCoach(preset){
+  const inp=document.getElementById('coach-inp');
+  const msg=preset||(inp?inp.value.trim():'');
+  if(!msg)return;
+  if(inp)inp.value='';
+  document.getElementById('coach-chips').style.display='none';
+  const msgs=document.getElementById('coach-msgs');
+  msgs.innerHTML+=`<div style="background:var(--bg2);border-radius:var(--rlg) 0 var(--rlg) var(--rlg);padding:11px 13px;margin-bottom:10px;align-self:flex-end"><p style="font-size:13px;color:var(--t1)">${msg}</p></div>`;
+  msgs.innerHTML+=`<div id="ct" class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  coachHist.push({role:'user',content:msg});
+  const r=await callAI('You are Early Coach, a warm concise sleep wind-down assistant. Give a personalised 2-3 sentence wind-down recommendation. Be specific and warm. End with one concrete tip. No bullets.',coachHist);
+  const reply=r||'Start with 5 minutes of box breathing, then put your phone face-down. A calm mind starts with one intentional pause.';
+  coachHist.push({role:'assistant',content:reply});
+  document.getElementById('ct')?.remove();
+  msgs.innerHTML+=`<div class="ai-bub"><div class="ai-badge">✦ AI</div><p>${reply}</p></div>`;
+  msgs.innerHTML+=`<button class="btn" style="margin-top:4px" onclick="go('s-windown')">Start wind-down →</button>`;
+}
+
+async function loadJournal(force){
+  const q=document.getElementById('journal-q');
+  if(!q||(q.dataset.loaded==='1'&&!force))return;
+  q.textContent='Generating your prompt...';
+  const r=await callAI('Generate ONE meaningful bedtime journal question under 20 words. Just the question, nothing else.',[{role:'user',content:'Give me a bedtime journal prompt.'}]);
+  q.textContent=(r||'What was one moment today that deserved more of your attention?').replace(/^["']|["']$/g,'');
+  q.dataset.loaded='1';
+}
+function submitJournal(){const a=document.getElementById('journal-ans');if(!a?.value.trim()){if(a)a.style.borderColor='var(--re)';setTimeout(()=>{if(a)a.style.borderColor=''},1500);return;}const b=document.querySelector('#s-journal .btn');if(b){b.textContent='Saved ✓';b.disabled=true;}setTimeout(()=>go('s-home'),900);}
+
+async function loadInsights(force){
+  const list=document.getElementById('insights-list');
+  if(!list||(insLoaded&&!force))return;
+  list.innerHTML='<div style="text-align:center;padding:20px;color:var(--t2);font-size:13px">Analysing patterns...</div>';
+  const btn=document.getElementById('ins-rt');if(btn)btn.textContent='Refreshing...';
+  const r=await callAI('Return 3 sleep insights as JSON array. Each: "title"(5 words max),"body"(1-2 sentences),"type"("positive","warning","tip"). JSON only, no markdown.',[{role:'user',content:'Analyse: Mon 1:05AM Tue 2:10AM Wed 12:40AM Thu 1:30AM Fri 3:00AM Sat 12:10AM Sun 12:42AM. Target midnight.'}]);
+  try{
+    const ins=JSON.parse((r||'').replace(/```json|```/g,'').trim());
+    const cols={positive:{bg:'#E1F5EE',tc:'#085041',bc:'#1D9E75'},warning:{bg:'#FAEEDA',tc:'#633806',bc:'#EF9F27'},tip:{bg:'#EEEDFE',tc:'#3C3489',bc:'#534AB7'}};
+    list.innerHTML=ins.map(i=>{const c=cols[i.type]||cols.tip;return`<div style="background:var(--bg);border:1px solid var(--bd);border-left:3px solid ${c.bc};border-radius:0 var(--rlg) var(--rlg) 0;padding:13px;margin-bottom:9px"><span style="background:${c.bg};color:${c.tc};font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:6px">${i.type.toUpperCase()}</span><p style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:3px">${i.title}</p><p style="font-size:12px;color:var(--t2);line-height:1.6">${i.body}</p></div>`;}).join('');
+    insLoaded=true;
+  }catch(e){list.innerHTML='<p style="color:var(--t2);font-size:13px;text-align:center;padding:16px">Could not load. Try again.</p>';}
+  if(btn)btn.textContent='Refresh insights';
+}
+
+function setSocTab(t){['f','c','b'].forEach(x=>{document.getElementById('st-'+x).className='tog-b'+(x===t?' on':'');document.getElementById('soc-'+x).style.display=x===t?'block':'none';});}
+
+function renderFriends(){
+  const l=document.getElementById('soc-f');
+  if(!l)return;
+  l.innerHTML=FRIENDS.map((f,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:${i<FRIENDS.length-1?'1px solid var(--bd)':'none'}"><div style="width:38px;height:38px;border-radius:50%;background:${f.bg};color:${f.tc};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${f.init}</div><div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--t1)">${f.name}</p><p style="font-size:11px;color:var(--t2)">${f.time}</p></div><p style="font-size:14px;font-weight:700;color:${f.streak>0?'var(--p)':'var(--t2)'}">🔥${f.streak}</p></div>`).join('');
+}
+
+function renderChart(){
+  const b=document.getElementById('chart-bars');if(!b)return;
+  const mx=Math.max(...WEEK);
+  b.innerHTML=WEEK.map((v,i)=>`<div style="flex:1;display:flex;align-items:flex-end"><div style="width:100%;height:${Math.round(v/mx*62)}px;background:${i===WEEK.length-1?'var(--p)':'#EEEDFE'};border-radius:3px 3px 0 0"></div></div>`).join('');
+}
+
+function renderStreakGrid(){
+  const g=document.getElementById('streak-grid');if(!g)return;
+  const v=[1,1,0,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1];
+  g.innerHTML=v.map(x=>`<div style="aspect-ratio:1;border-radius:3px;background:${x?'var(--p)':'var(--bg2)'}"></div>`).join('');
+}
+
+let bp=0;
+const bP=['Inhale...','Hold...','Exhale...','Hold...'];
+const bS=['scale(1.5)','scale(1.5)','scale(1)','scale(1)'];
+function breathe(){bp=(bp+1)%4;const c=document.getElementById('bc');const l=document.getElementById('bl');if(c)c.style.transform=bS[bp];if(l)l.textContent=bP[bp];}
+
+updateClock();
+setInterval(updateClock,10000);
+setInterval(breathe,4000);
+</script>
+</body>
+</html>
