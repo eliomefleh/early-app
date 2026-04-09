@@ -17,14 +17,18 @@ app.post('/api/ai', async (req, res) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system,
         messages: Array.isArray(messages) ? messages : [{ role: 'user', content: messages }]
       })
     });
     const data = await response.json();
-    res.json({ text: data.content?.[0]?.text || '' });
+    if (!response.ok || !data.content?.[0]?.text) {
+      console.error('Anthropic API error:', JSON.stringify(data));
+      return res.status(502).json({ error: data.error?.message || 'Empty response from AI', raw: data });
+    }
+    res.json({ text: data.content[0].text });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
